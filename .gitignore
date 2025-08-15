@@ -1,0 +1,19 @@
+
+# Maven
+target/
+surefire-reports/
+allure-results/
+allure-report/
+*.log
+
+# IDE
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+.DS_Store
+
+# OS
+Thumbs.db

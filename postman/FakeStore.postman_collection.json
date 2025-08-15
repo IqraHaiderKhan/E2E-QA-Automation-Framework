@@ -1,0 +1,22 @@
+{
+  "info": {
+    "name": "FakeStore API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Products",
+      "request": {
+        "method": "GET",
+        "url": "https://fakestoreapi.com/products"
+      }
+    },
+    {
+      "name": "Get Product 1",
+      "request": {
+        "method": "GET",
+        "url": "https://fakestoreapi.com/products/1"
+      }
+    }
+  ]
+}
