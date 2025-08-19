@@ -1,7 +1,7 @@
 
 package tests;
 
-import framework.BaseTest;
+import tests.BaseTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.HomePage;

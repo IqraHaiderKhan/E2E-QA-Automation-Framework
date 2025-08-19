@@ -1,7 +1,7 @@
 
 package bdd.steps;
 
-import framework.BaseTest;
+import tests.BaseTest;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
