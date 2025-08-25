@@ -27,3 +27,13 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B clean install --file pom.xml
+
+      # ✅ Upload screenshots if tests fail
+      - name: Upload Test Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots
+          path: screenshots/
+          if-no-files-found: ignore
+
