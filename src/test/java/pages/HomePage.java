@@ -2,30 +2,42 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import java.time.Duration;
 
 public class HomePage {
     private WebDriver driver;
 
     // Locators
-    private By inventoryContainer = By.id("inventory_container");
-    private By firstAddToCartButton = By.xpath("(//button[contains(text(),'Add to cart')])[1]");
-    private By cartLink = By.className("shopping_cart_link");
+    private By loginLink = By.className("ico-login");
+    private By logoutLink = By.className("ico-logout");
+    private By registerLink = By.className("ico-register");
+    private By searchField = By.id("small-searchterms");
+    private By searchButton = By.cssSelector("button.search-box-button");
 
-    // Constructor
     public HomePage(WebDriver driver) {
         this.driver = driver;
     }
 
-    // Actions
-    public boolean isProductListDisplayed() {
-        return driver.findElement(inventoryContainer).isDisplayed();
+    // --- Existing ---
+    public void clickLoginLink() {
+        driver.findElement(loginLink).click();
     }
 
-    public void addFirstProductToCart() {
-        driver.findElement(firstAddToCartButton).click();
+    public boolean isLogoutLinkVisible() {
+        return driver.findElement(logoutLink).isDisplayed();
     }
 
-    public void openCart() {
-        driver.findElement(cartLink).click();
+    // --- 🔹 Missing methods ---
+    public void clickRegister() {
+        driver.findElement(registerLink).click();
+    }
+
+    public void search(String productName) {
+        driver.findElement(searchField).clear();
+        driver.findElement(searchField).sendKeys(productName);
+        driver.findElement(searchButton).click();
     }
 }
+
