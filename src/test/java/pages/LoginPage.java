@@ -1,35 +1,43 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
 public class LoginPage {
     private WebDriver driver;
 
-    // Locators
     private By usernameField = By.id("user-name");
     private By passwordField = By.id("password");
     private By loginButton = By.id("login-button");
 
-    // Constructor
+    // ✅ Popup locator (Google password manager alert)
+    private By popupOkButton = By.xpath("//button[text()='OK']");
+
     public LoginPage(WebDriver driver) {
         this.driver = driver;
     }
 
-    // Actions
-    public void open() {
-        driver.get("https://www.saucedemo.com/");
-    }
-
-    public void enterUsername(String username) {
+    public void login(String username, String password) {
         driver.findElement(usernameField).sendKeys(username);
-    }
-
-    public void enterPassword(String password) {
         driver.findElement(passwordField).sendKeys(password);
+        driver.findElement(loginButton).click();
+
+        // ✅ Handle Google password popup if it shows
+        handlePasswordPopup();
     }
 
-    public void clickLogin() {
-        driver.findElement(loginButton).click();
+    private void handlePasswordPopup() {
+        try {
+            driver.findElement(popupOkButton).click();
+            System.out.println("⚠️ Password popup appeared. Clicked OK automatically.");
+        } catch (NoSuchElementException e) {
+            // Popup didn’t appear → safe to continue
+        }
     }
 }
+
+
+
+
+
