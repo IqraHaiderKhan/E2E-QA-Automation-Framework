@@ -2,19 +2,23 @@ package tests;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import pages.HomePage;
 import pages.LoginPage;
 
 public class LoginTest extends BaseTest {
 
     @Test
     public void validLogin_flow() {
-        HomePage homePage = new HomePage(driver);
-        LoginPage loginPage = homePage.clickLoginLink();
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login("standard_user", "secret_sauce");
 
-        loginPage.login("testuser@example.com", "Password123");
-
-        // Validate successful login
-        Assert.assertTrue(homePage.isLogoutLinkVisible(), "Login failed!");
+        // Assert user is redirected to inventory page
+        String currentUrl = driver.getCurrentUrl();
+        Assert.assertTrue(currentUrl.contains("inventory"), "User was not redirected to inventory page after login");
     }
 }
+
+
+
+
+
+
