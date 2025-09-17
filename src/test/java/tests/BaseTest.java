@@ -13,16 +13,17 @@ public class BaseTest {
     @BeforeMethod
     public void setUp() {
         WebDriverManager.chromedriver().setup();
+
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--disable-gpu");
-        options.addArguments("--window-size=1920,1080");
-        if (System.getenv("CI") != null) {
-            options.addArguments("--headless=new");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-        }
+        // ✅ Disable Google password manager popup
+        options.addArguments("--disable-save-password-bubble");
+        options.addArguments("--disable-infobars");
+        options.addArguments("--disable-notifications");
+        options.addArguments("--incognito");  // fresh session each time
+
         driver = new ChromeDriver(options);
-        driver.get("https://demo.nopcommerce.com/");
+        driver.manage().window().maximize();
+        driver.get("https://www.saucedemo.com/");
     }
 
     @AfterMethod
@@ -32,3 +33,8 @@ public class BaseTest {
         }
     }
 }
+
+
+
+
+
