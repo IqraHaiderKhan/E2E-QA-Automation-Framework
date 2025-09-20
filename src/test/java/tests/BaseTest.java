@@ -15,11 +15,19 @@ public class BaseTest {
         WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = new ChromeOptions();
-        // ✅ Disable Google password manager popup
         options.addArguments("--disable-save-password-bubble");
         options.addArguments("--disable-infobars");
         options.addArguments("--disable-notifications");
-        options.addArguments("--incognito");  // fresh session each time
+        options.addArguments("--incognito");
+
+        // ✅ Special settings for CI (GitHub Actions)
+        if (System.getenv("CI") != null) {
+            options.addArguments("--headless=new"); // headless only in CI
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--remote-allow-origins=*");
+            options.addArguments("--user-data-dir=/tmp/chrome-profile-" + System.currentTimeMillis());
+        }
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
@@ -33,8 +41,4 @@ public class BaseTest {
         }
     }
 }
-
-
-
-
 
