@@ -1,43 +1,46 @@
 package pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
 public class LoginPage {
     private WebDriver driver;
 
+    // Locators
     private By usernameField = By.id("user-name");
     private By passwordField = By.id("password");
     private By loginButton = By.id("login-button");
-
-    // ✅ Popup locator (Google password manager alert)
-    private By popupOkButton = By.xpath("//button[text()='OK']");
+    private By errorMessage = By.cssSelector("h3[data-test='error']");
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
     }
 
-    public void login(String username, String password) {
+    // 🔹 Enter username
+    public void enterUsername(String username) {
         driver.findElement(usernameField).sendKeys(username);
-        driver.findElement(passwordField).sendKeys(password);
-        driver.findElement(loginButton).click();
-
-        // ✅ Handle Google password popup if it shows
-        handlePasswordPopup();
     }
 
-    private void handlePasswordPopup() {
-        try {
-            driver.findElement(popupOkButton).click();
-            System.out.println("⚠️ Password popup appeared. Clicked OK automatically.");
-        } catch (NoSuchElementException e) {
-            // Popup didn’t appear → safe to continue
-        }
+    // 🔹 Enter password
+    public void enterPassword(String password) {
+        driver.findElement(passwordField).sendKeys(password);
+    }
+
+    // 🔹 Click login
+    public void clickLogin() {
+        driver.findElement(loginButton).click();
+    }
+
+    // 🔹 Combined login method
+    public void login(String username, String password) {
+        enterUsername(username);
+        enterPassword(password);
+        clickLogin();
+    }
+
+    // 🔹 Get error message (for negative login tests)
+    public String getErrorMessage() {
+        return driver.findElement(errorMessage).getText();
     }
 }
-
-
-
-
 
