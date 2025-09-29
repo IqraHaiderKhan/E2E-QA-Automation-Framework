@@ -15,6 +15,10 @@ public class CheckoutPage {
     private By continueBtn = By.id("continue");
     private By finishBtn = By.id("finish");
 
+    private By checkoutOverviewTitle = By.className("title");
+    private By successMessage = By.className("complete-header");
+    private By errorMessage = By.cssSelector("h3[data-test='error']");
+
     public CheckoutPage(WebDriver driver) {
         this.driver = driver;
     }
@@ -27,8 +31,28 @@ public class CheckoutPage {
     }
 
     public void finishCheckout() {
-        driver.findElement(finishBtn).click();
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+            .until(ExpectedConditions.elementToBeClickable(finishBtn))
+            .click();
+    }
+    public void clickContinue() {
+    driver.findElement(continueBtn).click();
+}
+
+    // ✅ Validation helpers
+    public String getSuccessMessage() {
+        return driver.findElement(successMessage).getText();
+    }
+
+    public String getErrorMessage() {
+        return driver.findElement(errorMessage).getText();
+    }
+
+    public String getOverviewTitle() {
+        return driver.findElement(checkoutOverviewTitle).getText();
     }
 }
+
+
 
 
