@@ -7,14 +7,15 @@ import pages.InventoryPage;
 import pages.CartPage;
 import pages.CheckoutPage;
 
-public class CheckoutNegativeTest extends BaseTest {
+public class CheckoutPositiveTest extends BaseTest {
 
     @Test
-    public void checkoutWithMissingDetails_shouldShowError() {
+    public void checkoutWithValidDetails_shouldSucceed() {
         // 1️⃣ Login
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("standard_user", "secret_sauce");
 
+        // Verify login worked
         Assert.assertTrue(
                 driver.getCurrentUrl().contains("inventory.html"),
                 "Login failed! Not on inventory page."
@@ -29,19 +30,15 @@ public class CheckoutNegativeTest extends BaseTest {
         CartPage cartPage = new CartPage(driver);
         cartPage.clickCheckout();
 
-        // 4️⃣ Fill form with missing info (e.g., no last name)
+        // 4️⃣ Fill checkout form
         CheckoutPage checkoutPage = new CheckoutPage(driver);
-        checkoutPage.fillForm("Iqra", "", "12345"); // ❌ missing last name
+        checkoutPage.fillForm("Iqra", "Khan", "12345");
         checkoutPage.clickContinue();
 
-        // 5️⃣ Verify error message appears
-        String errorMsg = driver.findElement(
-                org.openqa.selenium.By.cssSelector("h3[data-test='error']")
-        ).getText();
-
+        // 5️⃣ Verify we move to next page (overview step)
         Assert.assertTrue(
-                errorMsg.contains("Error"),
-                "Expected an error message but got: " + errorMsg
+                driver.getCurrentUrl().contains("checkout-step-two.html"),
+                "Checkout did not proceed to step two!"
         );
     }
 }
