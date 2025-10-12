@@ -1,4 +1,4 @@
-name: CI Tests
+name: 🧪 E2E Automation CI
 
 on:
   push:
@@ -9,23 +9,39 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      - name: Set up JDK 11
+    steps:
+      # 1️⃣ Checkout your repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set up latest LTS JDK (Java 21)
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '21'
           distribution: 'temurin'
+          cache: maven
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Run tests with Maven
+      # 3️⃣ Run Maven tests
+      - name: Run Tests with Maven
         run: mvn clean test
+
+      # 4️⃣ Upload test reports (surefire)
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+
+      # 5️⃣ (Optional) Upload Extent/Allure HTML reports if you use them
+      - name: Upload HTML Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report
+          path: |
+            target/extent-report/
+            target/allure-report/
+          if-no-files-found: ignore
