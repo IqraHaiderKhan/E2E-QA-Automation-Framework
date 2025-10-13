@@ -5,11 +5,19 @@ target/
 # Logs
 *.log
 
-# IDE
+# IDE settings
 .idea/
 *.iml
 .vscode/
 
-# OS
+# OS-specific files
 .DS_Store
 Thumbs.db
+
+# Test output & reports
+test-output/
+*.png
+
+# Temporary files
+*.tmp
+
