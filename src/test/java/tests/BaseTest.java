@@ -1,32 +1,53 @@
 package tests;
+
 import org.testng.ITestResult;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.Parameters;
-import org.testng.ITestContext;
+import org.testng.annotations.*;
 import utils.ExtentManager;
 import utils.ScreenshotUtils;
-import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.MediaEntityBuilder;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.util.Properties;
+
 public class BaseTest {
 
     protected WebDriver driver;
+    private long startTime; // ⏱️ Track test start time
 
     @BeforeSuite
     public void startReport() {
         ExtentManager.getInstance(); // initialize report once
+        addSystemInfo(); // 🔹 Add environment details
+    }
+
+    private void addSystemInfo() {
+        try {
+            Properties props = System.getProperties();
+            RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+
+            ExtentManager.getInstance().setSystemInfo("Browser", "Chrome");
+            ExtentManager.getInstance().setSystemInfo("OS", props.getProperty("os.name") + " " + props.getProperty("os.version"));
+            ExtentManager.getInstance().setSystemInfo("Java Version", props.getProperty("java.version"));
+            ExtentManager.getInstance().setSystemInfo("User", props.getProperty("user.name"));
+            ExtentManager.getInstance().setSystemInfo("Execution Time", runtimeMxBean.getStartTime() + "");
+        } catch (Exception e) {
+            System.out.println("⚠️ Unable to add system info: " + e.getMessage());
+        }
     }
 
     @BeforeMethod
     public void setUp(ITestResult result) {
-        // ✅ Create Extent test for each test method
         ExtentManager.createTest(result.getMethod().getMethodName());
+        startTime = System.currentTimeMillis();
 
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
@@ -51,21 +72,45 @@ public class BaseTest {
     @AfterMethod
     public void tearDown(ITestResult result) {
         if (driver != null) {
-            if (result.getStatus() == ITestResult.FAILURE) {
-                String screenshotPath = ScreenshotUtils.captureScreenshot(driver, result.getName());
-                ExtentManager.getTest().fail("❌ Test Failed: " + result.getThrowable());
-                ExtentManager.getTest().addScreenCaptureFromPath(screenshotPath);
-            } else if (result.getStatus() == ITestResult.SUCCESS) {
-                ExtentManager.getTest().pass("✅ Test Passed");
-            } else if (result.getStatus() == ITestResult.SKIP) {
-                ExtentManager.getTest().skip("⚠️ Test Skipped");
+            long duration = System.currentTimeMillis() - startTime;
+            ExtentManager.getTest().info("⏱️ Test Duration: " + duration + " ms");
+
+            try {
+                if (result.getStatus() == ITestResult.FAILURE) {
+                    String screenshotPath = ScreenshotUtils.captureScreenshot(driver, result.getName());
+                    ExtentManager.getTest().fail("❌ Test Failed: " + result.getThrowable(),
+                            MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath, "📸 View Screenshot").build());
+                } else if (result.getStatus() == ITestResult.SUCCESS) {
+                    ExtentManager.getTest().pass("✅ Test Passed");
+                } else if (result.getStatus() == ITestResult.SKIP) {
+                    ExtentManager.getTest().skip("⚠️ Test Skipped");
+                }
+            } catch (Exception e) {
+                System.out.println("⚠️ Error while logging result: " + e.getMessage());
             }
+
             driver.quit();
         }
     }
 
     @AfterSuite
     public void flushReport() {
-        ExtentManager.getInstance().flush(); // ✅ Generate final report at the end
+        ExtentManager.getInstance().flush();
+        openReport(); // 🚀 Auto-open Extent Report after all tests
+    }
+
+    private void openReport() {
+        try {
+            File reportFile = new File("test-output/ExtentReport.html");
+            if (reportFile.exists() && Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(reportFile.toURI());
+                System.out.println("📊 Extent Report opened successfully: " + reportFile.getAbsolutePath());
+            } else {
+                System.out.println("⚠️ Report not found or desktop browse not supported.");
+            }
+        } catch (IOException e) {
+            System.out.println("❌ Failed to open Extent Report automatically: " + e.getMessage());
+        }
     }
 }
+
