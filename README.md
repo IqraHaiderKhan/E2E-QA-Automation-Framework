@@ -1,9 +1,3 @@
-# RestAssured API Automation
+# RestAssured API Automation Project
 
-Initial project structure for a REST Assured-based API test framework.
-
-## Structure
-- `src/main/java`: framework config and utilities
-- `src/test/java`: API test cases
-
-This commit sets up the base Maven structure for future commits.
+This repository contains the base setup for a RestAssured API testing framework.

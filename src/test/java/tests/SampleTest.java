@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 public class SampleTest {
 
     @Test
-    public void demoTest() {
-        System.out.println("Project structure initialized successfully!");
+    public void sampleTest() {
+        System.out.println("✅ Framework initialized successfully.");
     }
 }
